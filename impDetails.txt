@@ -1,0 +1,14 @@
+npm install -g firebase-tools
+firebase login
+firebase init
+
+{
+  "hosting": {
+    "site": "puneroom",
+
+    "public": "public",
+    ...
+  }
+}
+
+firebase deploy --only hosting:puneroom

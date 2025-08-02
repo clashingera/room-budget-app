@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Budget</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Room Budget</h1>
+            <div id="themeToggle" class="theme-switcher">
+                <i class="fas fa-sun"></i>
+                <span class="slider"></span>
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div><strong>Total Fund</strong>
+                <p id="totalFund">₹0</p>
+            </div>
+            <div><strong>Total Spent</strong>
+                <p id="totalSpent">₹0</p>
+            </div>
+            <div><strong>Remaining Balance</strong>
+                <p id="remainingBalance">₹0</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <input type="text" id="fundName" placeholder="Contributor's Name">
+            <input type="number" id="fundInput" placeholder="₹ Amount">
+            <button id="addFundBtn">Add Fund</button>
+            <button id="showContributorsBtn">Contributors</button>
+            <button id="showLogsBtn">See Logs</button>
+        </div>
+
+        <div class="expense-form">
+            <input type="date" id="expDate">
+            <input type="text" id="expDesc" placeholder="Expense Detail">
+            <input type="text" id="expSpender" placeholder="Spender Name">
+            <input type="number" id="expAmount" placeholder="₹ Amount">
+            <button id="addExpenseBtn">Add Expense</button>
+        </div>
+
+        <div class="expense-list">
+            <h3>Expense List</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Detail</th>
+                            <th>Spender</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="logPanel" class="log-panel">
+        <div class="log-panel-header">
+            <h3>Activity Logs</h3>
+            <button class="close-btn" id="closeLogsBtn">&#x2715;</button>
+        </div>
+        <div class="log-table-container">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="logEntries"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="editExpenseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditExpenseModalBtn">&times;</span>
+            <h2>Edit Expense</h2>
+            <input type="hidden" id="editExpId">
+            <input type="date" id="editExpDate">
+            <input type="text" id="editExpDesc" placeholder="Detail">
+            <input type="number" id="editExpAmount" placeholder="₹ Amount">
+            <div class="modal-actions">
+                <button class="save-btn" id="saveExpenseBtn">Save Changes</button>
+                <button class="delete-btn" id="requestDeleteExpenseBtn">Delete Expense</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="contributorsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeContributorsModalBtn">&times;</span>
+            <h2>Contributors</h2>
+            <div id="contributorsList">
+            </div>
+        </div>
+    </div>
+
+    <div id="editContributorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditContributorModalBtn">&times;</span>
+            <h2>Edit Contributor</h2>
+            <input type="hidden" id="editContributorId">
+            <input type="text" id="editContributorName" placeholder="Contributor's Name">
+            <input type="number" id="editContributorAmount" placeholder="₹ Amount">
+            <div class="modal-actions">
+                <button class="save-btn" id="saveContributorBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h2 id="confirmationTitle">Are you sure?</h2>
+            <p id="confirmationMessage">This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelActionBtn">Cancel</button>
+                <button id="confirmActionBtn" class="delete-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script type="module">
+        // Import functions from the Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            onSnapshot,
+            doc,
+            getDocs,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            query,
+            orderBy,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Import your main application logic
+        import { main } from './script.js';
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDE4ViXgglwqLTaHfzDZQb0rzvtyDyq54",
+            authDomain: "room-budget-app.firebaseapp.com",
+            projectId: "room-budget-app",
+            storageBucket: "room-budget-app.firebasestorage.app",
+            messagingSenderId: "475610634376",
+            appId: "1:475610634376:web:719557d194fdd5170b673d",
+            measurementId: "G-SRMNEK7XYL"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Get a reference to the Firestore database service
+        const db = getFirestore(app);
+
+        // Start your application by calling the main function from script.js
+        // and passing it all the necessary Firebase tools.
+        main({
+            db,
+            collection,
+            onSnapshot,
+            doc,
+            getDocs,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            query,
+            orderBy,
+            serverTimestamp
+        });
+    </script>
+
+</body>
+
+</html>
