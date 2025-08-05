@@ -2,73 +2,90 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Room Budget</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/style.css" />
 </head>
 
 <body>
     <div class="container">
         <div class="header">
+            <div id="statusMessage"></div>
             <h1>Room Budget</h1>
-            <div id="themeToggle" class="theme-switcher">
-                <i class="fas fa-sun"></i>
-                <span class="slider"></span>
-                <i class="fas fa-moon"></i>
+            <div id="user-profile-area">
+                <button class="login-btn" id="loginBtn">Login with Google</button>
+                <img src="" alt="Profile" id="profilePic" class="profile-pic" style="display: none;" />
             </div>
         </div>
+        <main id="mainContent">
+            <div class="summary-card">
+                <div>
+                    <strong>Total Fund</strong>
+                    <p id="totalFund">₹0</p>
+                </div>
+                <div>
+                    <strong>Total Spent</strong>
+                    <p id="totalSpent">₹0</p>
+                </div>
+                <div>
+                    <strong>Remaining Balance</strong>
+                    <p id="remainingBalance">₹0</p>
+                </div>
+            </div>
 
-        <div class="summary-card">
-            <div><strong>Total Fund</strong>
-                <p id="totalFund">₹0</p>
+            <div class="actions">
+                <input type="text" id="fundName" placeholder="Contributor's Name" />
+                <input type="number" id="fundInput" placeholder="₹ Amount" />
+                <button id="addFundBtn">Add Fund</button>
+                <button id="showContributorsBtn">Contributors</button>
+                <button id="showLogsBtn">See Logs</button>
             </div>
-            <div><strong>Total Spent</strong>
-                <p id="totalSpent">₹0</p>
-            </div>
-            <div><strong>Remaining Balance</strong>
-                <p id="remainingBalance">₹0</p>
-            </div>
-        </div>
 
-        <div class="actions">
-            <input type="text" id="fundName" placeholder="Contributor's Name">
-            <input type="number" id="fundInput" placeholder="₹ Amount">
-            <button id="addFundBtn">Add Fund</button>
-            <button id="showContributorsBtn">Contributors</button>
-            <button id="showLogsBtn">See Logs</button>
-        </div>
-
-        <div class="expense-form">
-            <input type="date" id="expDate">
-            <input type="text" id="expDesc" placeholder="Expense Detail">
-            <input type="text" id="expSpender" placeholder="Spender Name">
-            <input type="number" id="expAmount" placeholder="₹ Amount">
-            <button id="addExpenseBtn">Add Expense</button>
-        </div>
-
-        <div class="expense-list">
-            <h3>Expense List</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Detail</th>
-                            <th>Spender</th>
-                            <th>Amount</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expenseTable"></tbody>
-                </table>
+            <div class="expense-form">
+                <input type="date" id="expDate" />
+                <input type="text" id="expDesc" placeholder="Expense Detail" />
+                <input type="text" id="expSpender" placeholder="Spender Name" />
+                <input type="number" id="expAmount" placeholder="₹ Amount" />
+                <button id="addExpenseBtn">Add Expense</button>
             </div>
+
+            <div class="expense-list">
+                <h3>Expense List</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Detail</th>
+                                <th>Spender</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <div id="profilePanel" class="profile-panel">
+        <div class="profile-panel-header">
+            <h3 id="profileUsername">Hello, Guest</h3>
+            <button class="close-btn" id="closeProfilePanelBtn">&#x2715;</button>
         </div>
+        <div class="profile-panel-menu" id="profileMenu">
+            <!-- Filled dynamically by ui.js buildProfileMenu() -->
+        </div>
+        <div class="profile-panel-content" id="profileContent"></div>
     </div>
 
     <div id="logPanel" class="log-panel">
@@ -89,39 +106,40 @@
         </div>
     </div>
 
-    <div id="editExpenseModal" class="modal">
+    <div id="contributorsModal" class="modal">
         <div class="modal-content">
-            <span class="close-button" id="closeEditExpenseModalBtn">&times;</span>
-            <h2>Edit Expense</h2>
-            <input type="hidden" id="editExpId">
-            <input type="date" id="editExpDate">
-            <input type="text" id="editExpDesc" placeholder="Detail">
-            <input type="number" id="editExpAmount" placeholder="₹ Amount">
-            <div class="modal-actions">
-                <button class="save-btn" id="saveExpenseBtn">Save Changes</button>
-                <button class="delete-btn" id="requestDeleteExpenseBtn">Delete Expense</button>
-            </div>
+            <span class="close-btn" id="closeContributorsModalBtn">&times;</span>
+            <h2>Contributors</h2>
+            <div id="contributorsList"></div>
         </div>
     </div>
 
-    <div id="contributorsModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="closeContributorsModalBtn">&times;</span>
-            <h2>Contributors</h2>
-            <div id="contributorsList">
-            </div>
+    <div id="editExpenseModal" class="modal" role="dialog" aria-labelledby="editExpenseModalTitle" aria-modal="true">
+    <div class="modal-content">
+        <span class="close-btn" id="closeEditExpenseModalBtn">&times;</span>
+        <h2 id="editExpenseModalTitle">Edit Expense</h2>
+        <input type="hidden" id="editExpId" />
+        <input type="date" id="editExpDate" />
+        <input type="text" id="editExpDesc" placeholder="Detail" />
+        <input type="number" id="editExpAmount" placeholder="₹ Amount" />
+        <div class="modal-actions">
+            <button id="saveExpenseBtn">Save Changes</button>
+            <button class="delete-btn" id="requestDeleteExpenseBtn">Delete</button>
         </div>
     </div>
+</div>
+
 
     <div id="editContributorModal" class="modal">
         <div class="modal-content">
-            <span class="close-button" id="closeEditContributorModalBtn">&times;</span>
+            <span class="close-btn" id="closeEditContributorModalBtn">&times;</span>
             <h2>Edit Contributor</h2>
-            <input type="hidden" id="editContributorId">
-            <input type="text" id="editContributorName" placeholder="Contributor's Name">
-            <input type="number" id="editContributorAmount" placeholder="₹ Amount">
+            <input type="hidden" id="editContributorId" />
+            <input type="text" id="editContributorName" placeholder="Name" />
+            <input type="number" id="editContributorAmount" placeholder="₹ Amount" />
             <div class="modal-actions">
-                <button class="save-btn" id="saveContributorBtn">Save Changes</button>
+                <button id="saveContributorBtn">Save Changes</button>
+                <button class="delete-btn" id="requestDeleteContributorBtn">Delete</button>
             </div>
         </div>
     </div>
@@ -137,61 +155,73 @@
         </div>
     </div>
 
-
-
-
+    <!-- GSAP, UI, Script, Firebase Loaders -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script type="module" src="ui.js"></script>
     <script type="module">
-        // Import functions from the Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import {
             getFirestore,
+            doc,
+            getDoc,
+            setDoc,
             collection,
             onSnapshot,
-            doc,
-            getDocs,
             addDoc,
             updateDoc,
             deleteDoc,
             query,
             orderBy,
-            serverTimestamp
+            serverTimestamp,
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            onAuthStateChanged,
+            signOut,
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { main } from "./script.js";
 
-        // Import your main application logic
-        import { main } from './script.js';
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBDE4ViXgglwqLTaHfzDZQb0rzvtyDyq54",
-            authDomain: "room-budget-app.firebaseapp.com",
-            projectId: "room-budget-app",
-            storageBucket: "room-budget-app.firebasestorage.app",
-            messagingSenderId: "475610634376",
-            appId: "1:475610634376:web:719557d194fdd5170b673d",
-            measurementId: "G-SRMNEK7XYL"
-        };
-
-        // Initialize Firebase
+        
         const app = initializeApp(firebaseConfig);
-        // Get a reference to the Firestore database service
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
-        // Start your application by calling the main function from script.js
-        // and passing it all the necessary Firebase tools.
+        // Apply stored theme on load
+        (function applyStoredTheme() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.body.setAttribute("data-theme", theme);
+        })();
+
         main({
             db,
+            auth,
+            provider,
+            signInWithPopup,
+            onAuthStateChanged,
+            signOut,
+            doc,
+            getDoc,
+            setDoc,
             collection,
             onSnapshot,
-            doc,
-            getDocs,
             addDoc,
             updateDoc,
             deleteDoc,
             query,
             orderBy,
-            serverTimestamp
+            serverTimestamp,
+            toggleTheme: () => {
+                const currentTheme = document.body.getAttribute("data-theme");
+                const newTheme = currentTheme === "light" ? "dark" : "light";
+                document.body.setAttribute("data-theme", newTheme);
+                localStorage.setItem("theme", newTheme);
+            },
         });
     </script>
+   
 
 </body>
 
